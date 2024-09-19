@@ -61,31 +61,65 @@ statInfId = {2013:"000023280346",2014:"000027235935",2015:"000031319124",2016:"0
 #2014:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000027235935&fileKind=0
 #2013:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000023280346&fileKind=0
 
+
+
+# Cache the entire data processing step
+@st.cache_data
+def process_all_data(statInfId):
+    # 最終的な結果を格納するための DataFrame を定義
+    df_all = pd.DataFrame()
+
+    # キーと値の両方を取得
+    for year, value in statInfId.items():
+
+        # ExcelファイルのURL
+        url = f"https://www.e-stat.go.jp/stat-search/file-download?statInfId={value}&fileKind=0"
+
+        # DataFrame を作成
+        df = create_dataframe(url, year, 59)
+
+        # 北海道と都府県の数値カラムのみを合計
+        df_sum = df[df['都道府県名'].isin(['北海道', '都府県'])].sum(numeric_only=True)
+
+        # 合計行に必要なカラムを追加
+        df_sum['都道府県名'] = '合計'
+        df_sum['西暦'] = year  # 年を適用する
+
+        # 合計行を1行のDataFrameに変換
+        df_sum = pd.DataFrame([df_sum], columns=df.columns)
+
+        # 最終結果の DataFrame に合計行を追加
+        df = pd.concat([df, df_sum], ignore_index=True)
+        df_all = pd.concat([df_all, df], ignore_index=True)
+
+    return df_all
+
+
 # 最終的な結果を格納するための DataFrame を定義
-df_all = pd.DataFrame()
+# df_all = pd.DataFrame()
 
-# キーと値の両方を取得
-for year, value in statInfId.items():
+# # キーと値の両方を取得
+# for year, value in statInfId.items():
 
-    # ExcelファイルのURL
-    url = f"https://www.e-stat.go.jp/stat-search/file-download?statInfId={value}&fileKind=0"
+#     # ExcelファイルのURL
+#     url = f"https://www.e-stat.go.jp/stat-search/file-download?statInfId={value}&fileKind=0"
 
-    # DataFrame を作成
-    df = create_dataframe(url, year, 59)
+#     # DataFrame を作成
+#     df = create_dataframe(url, year, 59)
 
-    # 北海道と都府県の数値カラムのみを合計
-    df_sum = df[df['都道府県名'].isin(['北海道', '都府県'])].sum(numeric_only=True)
+#     # 北海道と都府県の数値カラムのみを合計
+#     df_sum = df[df['都道府県名'].isin(['北海道', '都府県'])].sum(numeric_only=True)
 
-    # 合計行に必要なカラムを追加
-    df_sum['都道府県名'] = '合計'
-    df_sum['西暦'] = year  # 年を適用する
+#     # 合計行に必要なカラムを追加
+#     df_sum['都道府県名'] = '合計'
+#     df_sum['西暦'] = year  # 年を適用する
 
-    # 合計行を1行のDataFrameに変換
-    df_sum = pd.DataFrame([df_sum], columns=df.columns)
+#     # 合計行を1行のDataFrameに変換
+#     df_sum = pd.DataFrame([df_sum], columns=df.columns)
 
-    # 最終結果の DataFrame に合計行を追加
-    df = pd.concat([df, df_sum], ignore_index=True)
-    df_all = pd.concat([df_all, df], ignore_index=True)
+#     # 最終結果の DataFrame に合計行を追加
+#     df = pd.concat([df, df_sum], ignore_index=True)
+#     df_all = pd.concat([df_all, df], ignore_index=True)
     #df_all.to_csv('output.csv', encoding='utf-8-sig', index=False)
 
 # セレクトボックスの作成
