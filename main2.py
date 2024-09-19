@@ -88,7 +88,7 @@ statInfId = {
 # データの処理
 df = process_all_data(statInfId)
 
-st.write(df['都道府県名'].unique())
+st.write(df['都道府県名'].unique().tolist())
 
 # セレクトボックスの作成
 select = st.selectbox(
