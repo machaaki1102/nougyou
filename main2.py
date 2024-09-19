@@ -47,14 +47,6 @@ def create_dataframe(url, year, nrows):
     df[df.select_dtypes(include=['number']).columns] = df.select_dtypes(include=['number']).astype(int)
     return df
 
-# 作物統計調査_令和5年産市町村別データ
-statInfId = {
-    2013:"000023280346",2014:"000027235935",2015:"000031319124",2016:"000031523033",
-    2017:"000031633213",2018:"000031759839",2019:"000031874921",2020:"000032014479",
-    2021:"000032129452",2022:"000032247665",2023:"000040110138"
-}
-
-
 # Cache the entire data processing step
 @st.cache_data
 def process_all_data(statInfId):
@@ -86,36 +78,18 @@ def process_all_data(statInfId):
 
     return df_all
 
+# 作物統計調査_令和5年産市町村別データ
+statInfId = {
+    2013:"000023280346",2014:"000027235935",2015:"000031319124",2016:"000031523033",
+    2017:"000031633213",2018:"000031759839",2019:"000031874921",2020:"000032014479",
+    2021:"000032129452",2022:"000032247665",2023:"000040110138"
+}
 
 
 # データの処理
 df = process_all_data(statInfId)
-# 最終的な結果を格納するための DataFrame を定義
-# df_all = pd.DataFrame()
 
-# # キーと値の両方を取得
-# for year, value in statInfId.items():
-
-#     # ExcelファイルのURL
-#     url = f"https://www.e-stat.go.jp/stat-search/file-download?statInfId={value}&fileKind=0"
-
-#     # DataFrame を作成
-#     df = create_dataframe(url, year, 59)
-
-#     # 北海道と都府県の数値カラムのみを合計
-#     df_sum = df[df['都道府県名'].isin(['北海道', '都府県'])].sum(numeric_only=True)
-
-#     # 合計行に必要なカラムを追加
-#     df_sum['都道府県名'] = '合計'
-#     df_sum['西暦'] = year  # 年を適用する
-
-#     # 合計行を1行のDataFrameに変換
-#     df_sum = pd.DataFrame([df_sum], columns=df.columns)
-
-#     # 最終結果の DataFrame に合計行を追加
-#     df = pd.concat([df, df_sum], ignore_index=True)
-#     df_all = pd.concat([df_all, df], ignore_index=True)
-
+st.write(df.columns)
 # セレクトボックスの作成
 select = st.selectbox(
     '都道府県を選択してください', 
