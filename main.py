@@ -124,3 +124,4 @@ fig.update_layout(
 
 # グラフを表示
 fig.show()
+st.dataframe(df_long)
