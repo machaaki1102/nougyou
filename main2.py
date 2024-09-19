@@ -4,6 +4,7 @@ import pandas as pd
 from io import BytesIO
 import plotly.express as px
 import streamlit as st
+import openpyxl 
 
 # アプリケーションID
 APP_ID = "8a64000813bc1bef3d6bb0bc345cb487873861ec"
