@@ -2,7 +2,6 @@ import requests
 from urllib.parse import urlencode
 import pandas as pd
 from io import BytesIO
-import pandas as pd
 import plotly.express as px
 import streamlit as st
 
@@ -48,18 +47,11 @@ def create_dataframe(url, year, nrows):
     return df
 
 # 作物統計調査_令和5年産市町村別データ
-statInfId = {2013:"000023280346",2014:"000027235935",2015:"000031319124",2016:"000031523033",2017:"000031633213",2018:"000031759839",2019:"000031874921",2020:"000032014479",2021:"000032129452",2022:"000032247665",2023:"000040110138"}
-#2023:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040110138&fileKind=0
-#2022:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000032247665&fileKind=0
-#2021:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000032129452&fileKind=0
-#2020:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000032014479&fileKind=0
-#2019:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031874921&fileKind=0
-#2018:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031759839&fileKind=0
-#2017:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031633213&fileKind=0
-#2016:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031523033&fileKind=0
-#2015:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000031319124&fileKind=0
-#2014:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000027235935&fileKind=0
-#2013:https://www.e-stat.go.jp/stat-search/file-download?statInfId=000023280346&fileKind=0
+statInfId = {
+    2013:"000023280346",2014:"000027235935",2015:"000031319124",2016:"000031523033",
+    2017:"000031633213",2018:"000031759839",2019:"000031874921",2020:"000032014479",
+    2021:"000032129452",2022:"000032247665",2023:"000040110138"
+}
 
 # 最終的な結果を格納するための DataFrame を定義
 df_all = pd.DataFrame()
@@ -86,14 +78,13 @@ for year, value in statInfId.items():
     # 最終結果の DataFrame に合計行を追加
     df = pd.concat([df, df_sum], ignore_index=True)
     df_all = pd.concat([df_all, df], ignore_index=True)
-    #df_all.to_csv('output.csv', encoding='utf-8-sig', index=False)
 
 # セレクトボックスの作成
 select = st.selectbox(
     '都道府県を選択してください', 
     df['都道府県名'].unique()  # 都道府県名のユニークな値を取得
 )
-#select = '愛知'
+
 # '合計' 行のみを抽出
 df_ = df[df['都道府県名'] == select]
 
@@ -123,4 +114,4 @@ fig.update_layout(
 )
 
 # グラフを表示
-fig.show()
+st.plotly_chart(fig)  # streamlitでPlotlyグラフを表示
